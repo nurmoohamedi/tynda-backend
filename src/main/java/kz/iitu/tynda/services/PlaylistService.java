@@ -1,5 +1,6 @@
 package kz.iitu.tynda.services;
 
+import kz.iitu.tynda.helpers.exception.NotFoundException;
 import kz.iitu.tynda.models.Music;
 import kz.iitu.tynda.models.Playlists;
 import kz.iitu.tynda.repository.MusicRepository;
@@ -7,16 +8,14 @@ import kz.iitu.tynda.repository.PlaylistRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class PlaylistService {
@@ -63,7 +62,7 @@ public class PlaylistService {
                 : Sort.by(sortBy).descending();
 
         // create Pageable instance
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Pageable pageable = PageRequest.of(pageNo-1, pageSize, sort);
 
         Page<Music> posts  = musicRepository.findAll(pageable);
 
@@ -84,6 +83,24 @@ public class PlaylistService {
 //
         return postResponse;
     }
+
+    public Music getMusicById(int id) throws NotFoundException {
+        Optional<Music> music = musicRepository.findById(id);
+
+        if (music.isPresent())
+            return music.get();
+        else
+            throw new NotFoundException("Music not found!");
+    }
+    public Playlists getPlaylistById(int id) throws NotFoundException {
+        Optional<Playlists> music = repository.findById(id);
+
+        if (music.isPresent())
+            return music.get();
+        else
+            throw new NotFoundException("Playlist not found!");
+    }
+
 }
 
 @Data

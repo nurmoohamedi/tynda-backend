@@ -2,7 +2,6 @@ package kz.iitu.tynda.controllers;
 
 import kz.iitu.tynda.helpers.response.ResponseHandler;
 import kz.iitu.tynda.services.PlaylistService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,8 +11,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/")
 public class PlaylistController {
 
-	@Autowired
 	PlaylistService playlistService;
+
+	public PlaylistController(PlaylistService playlistService) {
+		this.playlistService = playlistService;
+	}
 
 	@GetMapping("playlist/all")
 //	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
@@ -26,6 +28,26 @@ public class PlaylistController {
 
 		System.out.println("start");
 		return ResponseHandler.generateResponse("", HttpStatus.OK, 0,  playlistService.getAll(pageNo, pageSize, sortBy, sortDir));
+	}
+
+	@GetMapping("playlist/{id}")
+//	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+	public ResponseEntity getPlaylistById(@PathVariable("id") int id){
+		try {
+			return ResponseHandler.generateResponse("", HttpStatus.OK, 0,  playlistService.getPlaylistById(id));
+		} catch (Exception e) {
+			return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, 1, null);
+		}
+	}
+
+	@GetMapping("music/{id}")
+//	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+	public ResponseEntity getMusicById(@PathVariable("id") int id){
+		try {
+			return ResponseHandler.generateResponse("", HttpStatus.OK, 0,  playlistService.getMusicById(id));
+		} catch (Exception e) {
+			return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, 1, null);
+		}
 	}
 
 	@GetMapping("music/all")
@@ -42,10 +64,8 @@ public class PlaylistController {
 }
 
 class AppConstants {
-
 	public static final String DEFAULT_PAGE_NUMBER = "0";
 	public  static final String DEFAULT_PAGE_SIZE = "5";
 	public static final String DEFAULT_SORT_BY = "id";
 	public static final String DEFAULT_SORT_DIRECTION = "asc";
-
 }
