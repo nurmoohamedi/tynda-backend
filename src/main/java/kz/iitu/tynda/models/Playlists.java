@@ -12,7 +12,7 @@ import java.util.List;
 public class Playlists {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "playlist_id")
     private Integer id;
 

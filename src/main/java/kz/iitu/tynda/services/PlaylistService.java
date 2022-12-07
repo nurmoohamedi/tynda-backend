@@ -20,11 +20,11 @@ import java.util.Optional;
 @Service
 public class PlaylistService {
 
-    PlaylistRepository repository;
+    PlaylistRepository playlistRepository;
     MusicRepository musicRepository;
 
-    public PlaylistService(PlaylistRepository repository, MusicRepository musicRepository) {
-        this.repository = repository;
+    public PlaylistService(PlaylistRepository playlistRepository, MusicRepository musicRepository) {
+        this.playlistRepository = playlistRepository;
         this.musicRepository = musicRepository;
     }
 
@@ -36,7 +36,7 @@ public class PlaylistService {
         // create Pageable instance
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
-        Page<Playlists> posts  = repository.findAll(pageable);
+        Page<Playlists> posts  = playlistRepository.findAll(pageable);
 
         // get content for page object
         List<Playlists> listOfPosts = posts.getContent();
@@ -93,12 +93,41 @@ public class PlaylistService {
             throw new NotFoundException("Music not found!");
     }
     public Playlists getPlaylistById(int id) throws NotFoundException {
-        Optional<Playlists> music = repository.findById(id);
+        Optional<Playlists> music = playlistRepository.findById(id);
 
         if (music.isPresent())
             return music.get();
         else
             throw new NotFoundException("Playlist not found!");
+    }
+
+    public void savePlaylist(Playlists playlists) {
+//        if (playlists.getId()==null) {
+//            playlists.setId((int) playlistRepository.count() + 1);
+//        }
+        playlistRepository.save(playlists);
+    }
+
+    public void updatePlaylist(int id, Playlists playlists) {
+//        if (playlists.getId()==null) {
+//            playlists.setId((int) playlistRepository.count() + 1);
+//        }
+        Playlists updatingObject = playlistRepository.findById(id).get();
+
+        if (updatingObject.getName() != null) {
+            if (playlists.getName() != null){
+                updatingObject.setName(playlists.getName());
+            }
+            if (playlists.getImg_link() != null){
+                updatingObject.setImg_link(playlists.getImg_link());
+            }
+        }
+
+        playlistRepository.save(updatingObject);
+    }
+
+    public void deletePlaylist(int id) {
+        playlistRepository.deleteById(id);
     }
 
 }
