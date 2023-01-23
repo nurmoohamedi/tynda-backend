@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.websocket.server.PathParam;
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/")
@@ -103,6 +105,18 @@ public class PlaylistController {
   ) {
     System.out.println("start");
     return ResponseHandler.generateResponse("", HttpStatus.OK, 0, playlistService.getAllMusic(pageNo, pageSize, sortBy, sortDir));
+  }
+
+
+  @PostMapping(value = "playlist/{id}/save-music")
+//	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+  public ResponseEntity saveMusicToPlaylist(@RequestParam("musicId") int musicId, @PathVariable("id") int id) {
+    try {
+      playlistService.addMusicToPlaylist(id, musicId);
+      return ResponseHandler.generateResponse("Saved success", HttpStatus.OK, 0, null);
+    } catch (Exception e) {
+      return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, 1, null);
+    }
   }
 }
 

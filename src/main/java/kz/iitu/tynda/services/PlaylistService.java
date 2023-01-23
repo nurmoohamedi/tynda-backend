@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -128,6 +129,21 @@ public class PlaylistService {
 
     public void deletePlaylist(int id) {
         playlistRepository.deleteById(id);
+    }
+
+    public void addMusicToPlaylist(int playlistId, int musicId) throws NotFoundException {
+        try {
+            Playlists playlist = playlistRepository.findById(playlistId).get();
+            Music music = musicRepository.findById(musicId).get();
+            ArrayList<Music> p_musics = (ArrayList<Music>) playlist.getMusics();
+            p_musics.add(music);
+
+            playlist.setMusics(p_musics);
+
+            playlistRepository.save(playlist);
+        } catch (Exception e) {
+            throw new NotFoundException("Data Not Found!");
+        }
     }
 
 }
