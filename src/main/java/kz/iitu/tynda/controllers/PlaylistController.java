@@ -2,12 +2,11 @@ package kz.iitu.tynda.controllers;
 
 import kz.iitu.tynda.helpers.response.ResponseHandler;
 import kz.iitu.tynda.models.Playlists;
+import kz.iitu.tynda.helpers.constant.AppConstants;
 import kz.iitu.tynda.services.PlaylistService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.websocket.server.PathParam;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -118,11 +117,4 @@ public class PlaylistController {
       return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, 1, null);
     }
   }
-}
-
-class AppConstants {
-  public static final String DEFAULT_PAGE_NUMBER = "0";
-  public static final String DEFAULT_PAGE_SIZE = "5";
-  public static final String DEFAULT_SORT_BY = "id";
-  public static final String DEFAULT_SORT_DIRECTION = "asc";
 }
