@@ -15,7 +15,7 @@ import kz.iitu.tynda.models.User;
 import kz.iitu.tynda.payload.request.LoginRequest;
 import kz.iitu.tynda.payload.request.SignupRequest;
 import kz.iitu.tynda.payload.response.JwtResponse;
-import kz.iitu.tynda.payload.response.MessageResponse;
+import kz.iitu.tynda.payload.response.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -98,13 +98,13 @@ public class AuthController {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
+                    .body(new ResponseMessage("Error: Username is already taken!"));
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
+                    .body(new ResponseMessage("Error: Email is already in use!"));
         }
 
         // Create new user's account
@@ -145,7 +145,7 @@ public class AuthController {
         user.setRoles(roles);
         userRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        return ResponseEntity.ok(new ResponseMessage("User registered successfully!"));
 //		return ResponseEntity.ok(new JwtResponse(jwt,
 //				userDetails.getId(),
 //				userDetails.getUsername(),

@@ -91,6 +91,9 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
         .antMatchers("/api/test/**").permitAll()
         .antMatchers("/api/playlist/**").permitAll()
         .antMatchers("/api/music/**").permitAll()
+        .antMatchers("/api/files/**").permitAll()
+        .antMatchers("/api/songs/**").permitAll()
+        .antMatchers("/files/**").permitAll()
         .anyRequest().authenticated();
     
     http.authenticationProvider(authenticationProvider());
