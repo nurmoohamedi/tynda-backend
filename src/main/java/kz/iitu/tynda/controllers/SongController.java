@@ -3,9 +3,11 @@ package kz.iitu.tynda.controllers;
 import kz.iitu.tynda.models.Song;
 import kz.iitu.tynda.services.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,11 +16,7 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
-import reactor.core.publisher.Mono;
-import org.springframework.core.io.Resource;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -50,7 +48,10 @@ public class SongController {
 //    }
 
     @PostMapping("/upload")
-    public ResponseEntity fileUpload(@RequestParam("file") MultipartFile[] files) {
+    public ResponseEntity fileUpload(
+            @RequestPart("dto") Song song,
+            @RequestPart("file") MultipartFile[] files
+    ) {
         String msg = "You successfully uploaded: " + System.lineSeparator();
         long totalSize = 0;
         try {
@@ -82,14 +83,14 @@ public class SongController {
             for (MultipartFile file : files) {
                 String ext = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
                 if (ext.equals("mp3")) {
-                    Song song = new Song();
-                    service.store(song);
-                    String path = "/songs/" + song.getId() + "." + ext;
-                    song.setName(file.getOriginalFilename().replaceFirst("[.][^.]+$", ""));
-                    song.setPath(path);
-                    song.setSize(file.getSize());
-                    song.setDate(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
-                    service.store(song);
+                    Song newSong = new Song();
+                    service.store(newSong);
+                    String path = "/songs/" + newSong.getId() + "." + ext;
+                    newSong.setName(file.getOriginalFilename().replaceFirst("[.][^.]+$", ""));
+                    newSong.setPath(path);
+                    newSong.setSize(file.getSize());
+                    newSong.setDate(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
+                    service.store(newSong);
                     byte[] bytes = file.getBytes();
                     Path location = Paths.get(path);
                     Files.write(location, bytes);
