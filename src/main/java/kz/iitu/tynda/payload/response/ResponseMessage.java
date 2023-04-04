@@ -1,9 +1,9 @@
 package kz.iitu.tynda.payload.response;
 
-public class MessageResponse {
+public class ResponseMessage {
 	private String message;
 
-	public MessageResponse(String message) {
+	public ResponseMessage(String message) {
 	    this.message = message;
 	  }
 
