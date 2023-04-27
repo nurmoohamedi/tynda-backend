@@ -57,6 +57,10 @@ public class PlaylistService {
         return postResponse;
     }
 
+    public Long getPlaylistsSize() {
+        return playlistRepository.count();
+    }
+
     public MusicResponse getAllMusic(int pageNo, int pageSize, String sortBy, String sortDir) {
 
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()

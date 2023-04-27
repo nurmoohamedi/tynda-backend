@@ -29,7 +29,6 @@ public class PlaylistController {
     @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
     @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
   ) {
-
     System.out.println("start");
     return ResponseHandler.generateResponse("", HttpStatus.OK, 0, playlistService.getAll(pageNo, pageSize, sortBy, sortDir));
   }
@@ -49,6 +48,15 @@ public class PlaylistController {
   public ResponseEntity savePlaylist(@RequestBody Playlists playlists) {
     System.out.println("save-1");
     System.out.println(playlists.toString());
+
+    if (playlists.getId() == null) {
+      Long playlistSize = playlistService.getPlaylistsSize() + 1;
+      String title = "Anjinaq #" + playlistSize.intValue();
+      Playlists newPlaylist = new Playlists();
+      newPlaylist.setName(title);
+      playlists = newPlaylist;
+    }
+
     try {
       playlistService.savePlaylist(playlists);
       return ResponseHandler.generateResponse("Saved success", HttpStatus.OK, 0, null);
