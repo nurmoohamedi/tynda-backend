@@ -28,25 +28,6 @@ public class SongController {
     @Autowired
     private FileStorageService service;
 
-//    @PostMapping("/upload")
-//    public ResponseEntity uploadFile(@RequestParam("file") MultipartFile file) {
-//        try {
-//            service.store(file);
-//            return ResponseHandler.generateResponse(
-//                    "File uploaded successfully: " + file.getOriginalFilename(),
-//                    HttpStatus.OK,
-//                    0,
-//                    null);
-//        } catch (Exception e) {
-//            return ResponseHandler.generateResponse(
-//                    "Could not upload the file: " + file.getOriginalFilename() + "!",
-//                    HttpStatus.INTERNAL_SERVER_ERROR,
-//                    1,
-//                    e.getMessage()
-//            );
-//        }
-//    }
-
     @PostMapping("/upload")
     public ResponseEntity fileUpload(
             @RequestPart("dto") Song song,

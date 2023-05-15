@@ -1,28 +1,46 @@
 package kz.iitu.tynda.services;
 
+import kz.iitu.tynda.models.Image;
 import kz.iitu.tynda.models.Song;
 import kz.iitu.tynda.repository.FileStorageRepository;
+import kz.iitu.tynda.repository.ImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
 
+import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 import org.springframework.core.io.Resource;
+
+import javax.servlet.ServletContext;
 
 @Service
 public class FileStorageService {
 
-    @Value("${server.base_path}")
-    String basePath;
+    @Value("${tynda.base_musics_path}")
+    String musicStoragePath;
+
+    String imageStoragePath = new FileSystemResource("").getFile().getAbsolutePath();
 
     @Autowired
+    ServletContext context;
+
     private FileStorageRepository fileStorageRepository;
+    private ImageRepository imageRepository;
+
+    public FileStorageService(FileStorageRepository fileStorageRepository, ImageRepository imageRepository) {
+        this.fileStorageRepository = fileStorageRepository;
+        this.imageRepository = imageRepository;
+    }
 
     public Song store(Song song) throws IOException {
 //        Song song = new Song(song.getName(), song.getSize(), song.getDate(), song.getPath());
@@ -39,9 +57,52 @@ public class FileStorageService {
 
     public Mono<Resource> getMusicStreaming(String id) {
         Song song = this.getSong(id).get();
-        // String path = "classpath:" + basePath + "/" + file.getName() + ".mp3";
-        String path = Paths.get(basePath, song.getName() + ".mp3").toString();
+        // String path = "classpath:" + musicStoragePath + "/" + file.getName() + ".mp3";
+        String path = Paths.get(musicStoragePath, song.getName() + ".mp3").toString();
         FileSystemResource fileSystemResource = new FileSystemResource(path);
         return Mono.fromSupplier(() -> fileSystemResource);
+    }
+
+    // Image Service Business Logic Layer ----------------------------------
+    public Resource downloadImage(String fileName) throws IOException {
+        Optional<Image> newImage = imageRepository.findById(fileName);
+        if (newImage.isPresent()) {
+            String fullPath = newImage.get().getImage_path();
+            return loadFileResource(fullPath);
+//            return Files.readAllBytes(new File(fullPath).toPath());
+        }
+        return null;
+    }
+
+    public Image uploadImage(MultipartFile file) throws IOException {
+        String absolutePath = imageStoragePath + "\\images\\";
+        String randomId = UUID.randomUUID().toString();
+
+
+        String fileType = file.getContentType().split("/")[1];
+        String fullPath = absolutePath + randomId + "." + fileType;
+        Image newImage = new Image(
+                randomId,
+                file.getOriginalFilename(),
+                file.getContentType(),
+                fullPath
+        );
+
+        file.transferTo(new File(fullPath));
+        return imageRepository.save(newImage);
+    }
+
+    public Resource loadFileResource(String filePath) {
+        try {
+            File file = new File(filePath);
+            if (file.exists()) {
+                InputStream in = new FileInputStream(file);
+                return new InputStreamResource(in);
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

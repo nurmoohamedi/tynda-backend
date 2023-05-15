@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>kz.iitu.tynda</groupId>
-	<artifactId>spring-boot-security-postgresql</artifactId>
+	<artifactId>tynda-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>tynda-music-service</name>
 	<description>Tynda - Music Streaming Service</description>
