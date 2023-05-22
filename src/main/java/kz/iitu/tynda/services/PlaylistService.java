@@ -1,10 +1,12 @@
 package kz.iitu.tynda.services;
 
 import kz.iitu.tynda.helpers.exception.NotFoundException;
-import kz.iitu.tynda.models.Music;
-import kz.iitu.tynda.models.Playlists;
+import kz.iitu.tynda.helpers.response.ResponseHandler;
+import kz.iitu.tynda.models.*;
+import kz.iitu.tynda.repository.ArtistRepository;
 import kz.iitu.tynda.repository.MusicRepository;
 import kz.iitu.tynda.repository.PlaylistRepository;
+import kz.iitu.tynda.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,10 +27,19 @@ public class PlaylistService {
 
     PlaylistRepository playlistRepository;
     MusicRepository musicRepository;
+    ArtistRepository artistRepository;
+    UserRepository userRepository;
 
-    public PlaylistService(PlaylistRepository playlistRepository, MusicRepository musicRepository) {
+    public PlaylistService(
+            PlaylistRepository playlistRepository,
+            MusicRepository musicRepository,
+            ArtistRepository artistRepository,
+            UserRepository userRepository
+    ) {
         this.playlistRepository = playlistRepository;
         this.musicRepository = musicRepository;
+        this.artistRepository = artistRepository;
+        this.userRepository = userRepository;
     }
 
     public PostResponse getAll(int pageNo, int pageSize, String sortBy, String sortDir) {
@@ -89,21 +102,36 @@ public class PlaylistService {
         return postResponse;
     }
 
-    public Music getMusicById(int id) throws NotFoundException {
+    public MusicDTO getMusicById(int id) throws NotFoundException {
         Optional<Music> music = musicRepository.findById(id);
-
-        if (music.isPresent())
-            return music.get();
+//        List<Artist> artists = artistRepository.findArtistsByMusicsId(id);
+        if (music.isPresent()) {
+            MusicDTO musicDTO = new MusicDTO(music.get());
+            return musicDTO;
+        }
         else
             throw new NotFoundException("Music not found!");
     }
     public Playlists getPlaylistById(int id) throws NotFoundException {
-        Optional<Playlists> music = playlistRepository.findById(id);
+        try {
+            Optional<Playlists> playlist = playlistRepository.findById(id);
+            List<MusicDTO> musicDTOList = new ArrayList<>();
 
-        if (music.isPresent())
-            return music.get();
-        else
-            throw new NotFoundException("Playlist not found!");
+            if (playlist.isPresent() && playlist.get().getMusics().size() > 0) {
+                for (Music music: playlist.get().getMusics()) {
+                    MusicDTO musicDTO = new MusicDTO(music);
+                    musicDTOList.add(musicDTO);
+                }
+            } else {
+                throw new NotFoundException("Artist not found!");
+            }
+
+            playlist.get().setMusicDTOList(musicDTOList);
+            playlist.get().setMusics(null);
+            return playlist.get();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public void savePlaylist(Playlists playlists) {
@@ -150,6 +178,23 @@ public class PlaylistService {
         }
     }
 
+    public List<Playlists> getPlaylistByUserId(Long id) {
+        Optional<User> currUser = userRepository.findById(id);
+        List<Playlists> playlists = new ArrayList<>();
+        if (currUser.isPresent() && currUser.get().getPlaylists().size() > 0) {
+            playlists = currUser.get().getPlaylists();
+        }
+        return playlists;
+    }
+
+    public List<Artist> getArtistsByUserId(Long id) {
+        Optional<User> currUser = userRepository.findById(id);
+        List<Artist> artists = new ArrayList<>();
+        if (currUser.isPresent() && currUser.get().getArtists().size() > 0) {
+            artists = currUser.get().getArtists();
+        }
+        return artists;
+    }
 }
 
 @Data

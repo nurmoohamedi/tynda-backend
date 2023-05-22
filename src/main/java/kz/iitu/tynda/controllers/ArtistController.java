@@ -1,12 +1,20 @@
 package kz.iitu.tynda.controllers;
 
+import kz.iitu.tynda.helpers.exception.NotFoundException;
 import kz.iitu.tynda.helpers.response.ResponseHandler;
 import kz.iitu.tynda.models.Artist;
+import kz.iitu.tynda.models.ArtistDTO;
+import kz.iitu.tynda.models.Music;
+import kz.iitu.tynda.models.MusicDTO;
 import kz.iitu.tynda.repository.ArtistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -19,7 +27,22 @@ public class ArtistController {
     @GetMapping("/{id}")
     public ResponseEntity getArtistById(@PathVariable String id) {
         try {
-            return ResponseHandler.generateResponse("", HttpStatus.OK, 0, artistRepository.findById(id));
+            Optional<Artist> artist = artistRepository.findById(id);
+//            ArtistDTO artistDTO = null;
+            List<MusicDTO> musicDTOList = new ArrayList<>();
+            if (artist.isPresent() && artist.get().getMusics().size() > 0) {
+                for (Music music: artist.get().getMusics()) {
+                    MusicDTO musicDTO = new MusicDTO(music);
+                    musicDTOList.add(musicDTO);
+                }
+            } else {
+                throw new NotFoundException("Artist not found!");
+            }
+
+            artist.get().setMusicDTOList(musicDTOList);
+            artist.get().setMusics(null);
+
+            return ResponseHandler.generateResponse("", HttpStatus.OK, 0, artist.get());
         } catch (Exception e) {
             return ResponseHandler.generateResponse("Smth wrong!", HttpStatus.INTERNAL_SERVER_ERROR, 1, null);
         }

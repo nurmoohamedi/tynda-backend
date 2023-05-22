@@ -19,11 +19,14 @@ public class Playlists {
     private String name;
     private String img_link;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(	name = "playlist_music",
             joinColumns = @JoinColumn(name = "playlist_id"),
             inverseJoinColumns = @JoinColumn(name = "music_id"))
     private List<Music> musics = new ArrayList<>();
+
+    @Transient
+    private List<MusicDTO> musicDTOList = new ArrayList<>();
 
     public Playlists() {}
 

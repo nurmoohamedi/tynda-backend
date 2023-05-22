@@ -95,6 +95,7 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
         .antMatchers("/api/songs/**").permitAll()
         .antMatchers("/api/image/**").permitAll()
         .antMatchers("/api/artist/**").permitAll()
+//        .antMatchers("/api/collection/**").permitAll() // TODO
         .antMatchers("/files/**").permitAll()
         .anyRequest().authenticated();
     
