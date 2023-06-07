@@ -8,20 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
+import javax.servlet.ServletContext;
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
-
-import org.springframework.web.multipart.MultipartFile;
-import reactor.core.publisher.Mono;
-import org.springframework.core.io.Resource;
-
-import javax.servlet.ServletContext;
 
 @Service
 public class FileStorageService {
@@ -75,21 +72,30 @@ public class FileStorageService {
     }
 
     public Image uploadImage(MultipartFile file) throws IOException {
-        String absolutePath = imageStoragePath + "\\images\\";
-        String randomId = UUID.randomUUID().toString();
+        Optional<Image> existedImage = imageRepository.findByName(file.getOriginalFilename());
 
+        System.out.println(file.getOriginalFilename());
 
-        String fileType = file.getContentType().split("/")[1];
-        String fullPath = absolutePath + randomId + "." + fileType;
-        Image newImage = new Image(
-                randomId,
-                file.getOriginalFilename(),
-                file.getContentType(),
-                fullPath
-        );
+        if (existedImage.isPresent()) {
+            return existedImage.get();
+        } else {
+            String absolutePath = imageStoragePath + "\\images\\";
+            String randomId = UUID.randomUUID().toString();
 
-        file.transferTo(new File(fullPath));
-        return imageRepository.save(newImage);
+            String fileType = file.getContentType().split("/")[1];
+            String fullPath = absolutePath + randomId + "." + fileType;
+            String publicPath = "http://localhost:8080/api/image/" + randomId;
+            Image newImage = new Image(
+                    randomId,
+                    file.getOriginalFilename(),
+                    file.getContentType(),
+                    fullPath,
+                    publicPath
+            );
+
+            file.transferTo(new File(fullPath));
+            return imageRepository.save(newImage);
+        }
     }
 
     public Resource loadFileResource(String filePath) {

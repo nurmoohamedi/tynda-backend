@@ -67,6 +67,7 @@ public class AuthController {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        User enteredUser = userRepository.findById(userDetails.getId()).get();
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
@@ -77,6 +78,8 @@ public class AuthController {
                         userDetails.getId(),
                         userDetails.getUsername(),
                         userDetails.getEmail(),
+                        enteredUser.getImg_link(),
+                        enteredUser.isSubscribed(),
                         roles));
     }
 
@@ -143,13 +146,26 @@ public class AuthController {
         }
 
         user.setRoles(roles);
-        userRepository.save(user);
+        User enteredUser = userRepository.save(user);
 
-        return ResponseEntity.ok(new ResponseMessage("User registered successfully!"));
-//		return ResponseEntity.ok(new JwtResponse(jwt,
-//				userDetails.getId(),
-//				userDetails.getUsername(),
-//				userDetails.getEmail(),
-//				roles));
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(signUpRequest.getUsername(), signUpRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        List<String> userRoles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
+
+        return ResponseHandler.generateResponse(
+                "", HttpStatus.OK, 0,
+                new JwtResponse(jwt,
+                        enteredUser.getId(),
+                        enteredUser.getUsername(),
+                        enteredUser.getEmail(),
+                        enteredUser.getImg_link(),
+                        enteredUser.isSubscribed(),
+                        userRoles));
     }
 }

@@ -3,7 +3,6 @@ package kz.iitu.tynda.controllers;
 import kz.iitu.tynda.helpers.exception.NotFoundException;
 import kz.iitu.tynda.helpers.response.ResponseHandler;
 import kz.iitu.tynda.models.Artist;
-import kz.iitu.tynda.models.ArtistDTO;
 import kz.iitu.tynda.models.Music;
 import kz.iitu.tynda.models.MusicDTO;
 import kz.iitu.tynda.repository.ArtistRepository;

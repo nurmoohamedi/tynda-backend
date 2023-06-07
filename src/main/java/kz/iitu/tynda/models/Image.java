@@ -15,17 +15,19 @@ import javax.persistence.*;
 public class Image {
 
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
+//    @GeneratedValue(generator = "uuid")
+//    @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
 
     private String name;
     private String type;
     private String image_path;
+    private String public_path;
 
-    public Image(String name, String type, String image_path) {
+    public Image(String name, String type, String image_path, String public_path) {
         this.name = name;
         this.type = type;
         this.image_path = image_path;
+        this.public_path = public_path;
     }
 }

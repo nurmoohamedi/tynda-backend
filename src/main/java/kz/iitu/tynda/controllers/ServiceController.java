@@ -1,9 +1,8 @@
 package kz.iitu.tynda.controllers;
 
-import kz.iitu.tynda.helpers.response.ResponseHandler;
 import kz.iitu.tynda.services.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,12 +18,8 @@ public class ServiceController {
     private FileStorageService fileStorageService;
 
     @GetMapping("image/{id}")
-    public ResponseEntity getImage(@PathVariable String id) {
-        try {
-            return ResponseEntity.ok(fileStorageService.downloadImage(id));
-        } catch (Exception e) {
-            return ResponseHandler.generateResponse("Something Wrong!", HttpStatus.INTERNAL_SERVER_ERROR, 1, null);
-        }
+    public Resource getImage(@PathVariable String id) throws IOException {
+        return fileStorageService.downloadImage(id);
     }
 
     @PostMapping("image/upload")
