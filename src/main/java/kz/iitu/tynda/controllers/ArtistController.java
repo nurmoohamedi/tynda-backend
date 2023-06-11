@@ -29,10 +29,12 @@ public class ArtistController {
             Optional<Artist> artist = artistRepository.findById(id);
 //            ArtistDTO artistDTO = null;
             List<MusicDTO> musicDTOList = new ArrayList<>();
-            if (artist.isPresent() && artist.get().getMusics().size() > 0) {
-                for (Music music: artist.get().getMusics()) {
-                    MusicDTO musicDTO = new MusicDTO(music);
-                    musicDTOList.add(musicDTO);
+            if (artist.isPresent()) {
+                if (artist.get().getMusics().size() > 0) {
+                    for (Music music: artist.get().getMusics()) {
+                        MusicDTO musicDTO = new MusicDTO(music);
+                        musicDTOList.add(musicDTO);
+                    }
                 }
             } else {
                 throw new NotFoundException("Artist not found!");

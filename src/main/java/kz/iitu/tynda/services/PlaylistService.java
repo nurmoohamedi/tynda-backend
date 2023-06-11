@@ -134,11 +134,11 @@ public class PlaylistService {
         }
     }
 
-    public void savePlaylist(Playlists playlists) {
+    public Playlists savePlaylist(Playlists playlists) {
 //        if (playlists.getId()==null) {
 //            playlists.setId((int) playlistRepository.count() + 1);
 //        }
-        playlistRepository.save(playlists);
+        return playlistRepository.save(playlists);
     }
 
     public void updatePlaylist(int id, Playlists playlists) {

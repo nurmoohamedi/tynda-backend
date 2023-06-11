@@ -58,7 +58,7 @@ public class PlaylistController {
     }
 
     try {
-      playlistService.savePlaylist(playlists);
+      Playlists savedPlaylist = playlistService.savePlaylist(playlists);
       return ResponseHandler.generateResponse("Saved success", HttpStatus.OK, 0, null);
     } catch (Exception e) {
       return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, 1, null);
