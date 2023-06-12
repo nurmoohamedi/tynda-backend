@@ -102,7 +102,7 @@ public class PlaylistService {
         return postResponse;
     }
 
-    public MusicDTO getMusicById(int id) throws NotFoundException {
+    public MusicDTO getMusicById(String id) throws NotFoundException {
         Optional<Music> music = musicRepository.findById(id);
 //        List<Artist> artists = artistRepository.findArtistsByMusicsId(id);
         if (music.isPresent()) {
@@ -163,7 +163,7 @@ public class PlaylistService {
         playlistRepository.deleteById(id);
     }
 
-    public void addMusicToPlaylist(int playlistId, int musicId) throws NotFoundException {
+    public void addMusicToPlaylist(int playlistId, String musicId) throws NotFoundException {
         try {
             Playlists playlist = playlistRepository.findById(playlistId).get();
             Music music = musicRepository.findById(musicId).get();

@@ -19,17 +19,28 @@ import java.util.Set;
 public class Music {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "music_id")
-    private Integer id;
+    private String id;
     private String name;
-    private String duration;
-    private String year;
+    private Long duration;
+
     private String img_link;
+    private String local_path;
+    private String public_path;
 
     @ManyToMany(mappedBy = "musics")
     @JsonBackReference
     private List<Artist> artists = new ArrayList<>();
 
     public Music() {}
+
+    public Music(String id, String name, Long duration, String img_link, String local_path, String public_path, List<Artist> artists) {
+        this.id = id;
+        this.name = name;
+        this.duration = duration;
+        this.img_link = img_link;
+        this.local_path = local_path;
+        this.public_path = public_path;
+        this.artists = artists;
+    }
 }

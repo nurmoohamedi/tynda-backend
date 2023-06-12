@@ -65,13 +65,13 @@ public class SongController {
                 String ext = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
                 if (ext.equals("mp3")) {
                     Song newSong = new Song();
-                    service.store(newSong);
+//                    service.store(newSong);
                     String path = "/songs/" + newSong.getId() + "." + ext;
                     newSong.setName(file.getOriginalFilename().replaceFirst("[.][^.]+$", ""));
                     newSong.setPath(path);
                     newSong.setSize(file.getSize());
                     newSong.setDate(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
-                    service.store(newSong);
+//                    service.store(newSong);
                     byte[] bytes = file.getBytes();
                     Path location = Paths.get(path);
                     Files.write(location, bytes);
@@ -88,15 +88,15 @@ public class SongController {
         return service.getMusicStreaming(id);
     }
 
-    @GetMapping("all")
-    public ResponseEntity getListFiles() {
-        List<Song> files = service.getAllFiles().map(dbFile -> {
-//            String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/songs/").path(dbFile.getId()).toUriString();
-
-            return new Song(dbFile.getId(), dbFile.getName(), dbFile.getSize(), dbFile.getDate(), dbFile.getPath());
-        }).collect(Collectors.toList());
-
-        return ResponseEntity.ok().body(files);
-    }
+//    @GetMapping("all")
+//    public ResponseEntity getListFiles() {
+//        List<Song> files = service.getAllFiles().map(dbFile -> {
+////            String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/songs/").path(dbFile.getId()).toUriString();
+//
+//            return new Song(dbFile.getId(), dbFile.getName(), dbFile.getSize(), dbFile.getDate(), dbFile.getPath());
+//        }).collect(Collectors.toList());
+//
+//        return ResponseEntity.ok().body(files);
+//    }
 
 }

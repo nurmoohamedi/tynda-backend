@@ -6,6 +6,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 
@@ -26,6 +27,20 @@ public class ServiceController {
     public ResponseEntity uploadImage(@RequestParam("file") MultipartFile file) throws IOException {
         try {
             return ResponseEntity.ok(fileStorageService.uploadImage(file));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("track/{id}.mp3")
+    public Mono<Resource> getTrack(@PathVariable String id) throws IOException {
+        return fileStorageService.getMusicStreaming(id);
+    }
+
+    @PostMapping("track/upload")
+    public ResponseEntity uploadTrack(@RequestParam("file") MultipartFile file) throws IOException {
+        try {
+            return ResponseEntity.ok(fileStorageService.uploadMusic(file));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }

@@ -93,8 +93,8 @@ public class UserDetailsService {
         }
     }
 
-    public void saveTrackToUser(int playlist, String apiType, Long userId) {
-        Optional<Music> artist = musicRepository.findById(playlist);
+    public void saveTrackToUser(String musicId, String apiType, Long userId) {
+        Optional<Music> artist = musicRepository.findById(musicId);
         Optional<User> user = userRepository.findById(userId);
 
         if (user.isPresent()) {

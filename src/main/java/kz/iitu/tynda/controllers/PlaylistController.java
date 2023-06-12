@@ -94,7 +94,7 @@ public class PlaylistController {
 
   @GetMapping("music/{id}")
 //	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-  public ResponseEntity getMusicById(@PathVariable("id") int id) {
+  public ResponseEntity getMusicById(@PathVariable("id") String id) {
     try {
       return ResponseHandler.generateResponse("", HttpStatus.OK, 0, playlistService.getMusicById(id));
     } catch (Exception e) {
@@ -117,7 +117,7 @@ public class PlaylistController {
 
   @PostMapping(value = "playlist/{id}/save-music")
 //	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-  public ResponseEntity saveMusicToPlaylist(@RequestParam("musicId") int musicId, @PathVariable("id") int id) {
+  public ResponseEntity saveMusicToPlaylist(@RequestParam("musicId") String musicId, @PathVariable("id") int id) {
     try {
       playlistService.addMusicToPlaylist(id, musicId);
       return ResponseHandler.generateResponse("Saved success", HttpStatus.OK, 0, null);

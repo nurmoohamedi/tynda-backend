@@ -98,6 +98,8 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
         .antMatchers("/api/user/**").permitAll()
 //        .antMatchers("/api/collection/**").permitAll() // TODO
         .antMatchers("/files/**").permitAll()
+        .antMatchers("/api/audiobook/**").permitAll()
+        .antMatchers("/api/track/**").permitAll()
         .anyRequest().authenticated();
     
     http.authenticationProvider(authenticationProvider());
