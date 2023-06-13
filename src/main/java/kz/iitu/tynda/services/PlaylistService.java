@@ -195,6 +195,15 @@ public class PlaylistService {
         }
         return artists;
     }
+
+    public List<Audiobook> getAudiobooksByUserId(Long id) {
+        Optional<User> currUser = userRepository.findById(id);
+        List<Audiobook> audiobooks = new ArrayList<>();
+        if (currUser.isPresent() && currUser.get().getAudiobooks().size() > 0) {
+            audiobooks = currUser.get().getAudiobooks();
+        }
+        return audiobooks;
+    }
 }
 
 @Data

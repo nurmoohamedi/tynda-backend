@@ -3,10 +3,7 @@ package kz.iitu.tynda.services;
 import kz.iitu.tynda.helpers.exception.AlreadyExistException;
 import kz.iitu.tynda.helpers.exception.NotFoundException;
 import kz.iitu.tynda.models.*;
-import kz.iitu.tynda.repository.ArtistRepository;
-import kz.iitu.tynda.repository.MusicRepository;
-import kz.iitu.tynda.repository.PlaylistRepository;
-import kz.iitu.tynda.repository.UserRepository;
+import kz.iitu.tynda.repository.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,17 +24,20 @@ public class UserDetailsService {
     MusicRepository musicRepository;
     ArtistRepository artistRepository;
     UserRepository userRepository;
+    AudiobookRepository audiobookRepository;
 
     public UserDetailsService(
             PlaylistRepository playlistRepository,
             MusicRepository musicRepository,
             ArtistRepository artistRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            AudiobookRepository audiobookRepository
     ) {
         this.playlistRepository = playlistRepository;
         this.musicRepository = musicRepository;
         this.artistRepository = artistRepository;
         this.userRepository = userRepository;
+        this.audiobookRepository = audiobookRepository;
     }
 
     public void createUserNewPlaylist(Playlists playlists, Long id) {
@@ -93,6 +93,27 @@ public class UserDetailsService {
         }
     }
 
+    public void saveAudiobookToUser(String artistId, String apiType, Long userId) {
+        Optional<Audiobook> audiobook = audiobookRepository.findById(artistId);
+        Optional<User> user = userRepository.findById(userId);
+
+        if (user.isPresent()) {
+            Audiobook exist = null;
+            for(Audiobook art: user.get().getAudiobooks()) {
+                if (art.getId() == artistId) {
+                    exist = art;
+                    break;
+                }
+            }
+            if (exist != null) {
+                user.get().getAudiobooks().remove(exist);
+            } else {
+                user.get().getAudiobooks().add(audiobook.get());
+            }
+            userRepository.save(user.get());
+        }
+    }
+
     public void saveTrackToUser(String musicId, String apiType, Long userId) {
         Optional<Music> artist = musicRepository.findById(musicId);
         Optional<User> user = userRepository.findById(userId);
@@ -125,6 +146,21 @@ public class UserDetailsService {
         if (user.isPresent()) {
             for(Artist artist: user.get().getArtists()) {
                 if (artist.getId().contains(id)) {
+                    exist = true;
+                    break;
+                }
+            }
+        }
+        return exist;
+    }
+
+    public boolean isAudiobookAdded(String id, Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+
+        boolean exist = false;
+        if (user.isPresent()) {
+            for(Audiobook audiobook: user.get().getAudiobooks()) {
+                if (audiobook.getId().contains(id)) {
                     exist = true;
                     break;
                 }

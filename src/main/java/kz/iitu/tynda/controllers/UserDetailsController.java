@@ -118,7 +118,7 @@ public class UserDetailsController {
     public ResponseEntity getUsersAllBooks(@AuthenticationPrincipal UserDetailsImpl user, Principal principal) {
         String userName = principal.getName();
         try {
-            return ResponseHandler.generateResponse("", HttpStatus.OK, 0, playlistService.getArtistsByUserId(user.getId()));
+            return ResponseHandler.generateResponse("", HttpStatus.OK, 0, playlistService.getAudiobooksByUserId(user.getId()));
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, 0, null);
         }
@@ -147,6 +147,20 @@ public class UserDetailsController {
     ) {
         try {
             userDetailsService.saveArtistToUser(artistId, apiType, user.getId());
+            return ResponseHandler.generateResponse("Saved success", HttpStatus.OK, 0, null);
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, 1, null);
+        }
+    }
+
+    @PostMapping("/collection/audiobooks")
+    public ResponseEntity saveAudiobookToUser(
+            @RequestParam("id") String artistId,
+            @RequestParam(value = "apiType", required = false) String apiType,
+            @AuthenticationPrincipal UserDetailsImpl user
+    ) {
+        try {
+            userDetailsService.saveAudiobookToUser(artistId, apiType, user.getId());
             return ResponseHandler.generateResponse("Saved success", HttpStatus.OK, 0, null);
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, 1, null);
@@ -204,6 +218,18 @@ public class UserDetailsController {
     ) {
         try {
             return ResponseHandler.generateResponse("", HttpStatus.OK, 0, userDetailsService.isArtistAdded(id, user.getId()));
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, 0, null);
+        }
+    }
+
+    @GetMapping("/collection/audiobooks/exist")
+    public ResponseEntity isAudiobookAdded(
+            @RequestParam("id") String id,
+            @AuthenticationPrincipal UserDetailsImpl user
+    ) {
+        try {
+            return ResponseHandler.generateResponse("", HttpStatus.OK, 0, userDetailsService.isAudiobookAdded(id, user.getId()));
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, 0, null);
         }

@@ -59,7 +59,7 @@ public class ArtistController {
     }
 
     @PostMapping
-    public ResponseEntity addArtist(Artist artist) {
+    public ResponseEntity addArtist(@RequestBody Artist artist) {
         try {
             return ResponseHandler.generateResponse("Artist added succesfully!", HttpStatus.OK, 0, artistRepository.save(artist));
         } catch (Exception e) {

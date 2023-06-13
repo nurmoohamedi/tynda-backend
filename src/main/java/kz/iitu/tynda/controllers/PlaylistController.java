@@ -65,6 +65,17 @@ public class PlaylistController {
     }
   }
 
+  @PostMapping("playlist/save/new")
+//	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+  public ResponseEntity savePlaylistNew(@RequestBody Playlists playlists) {
+    try {
+      Playlists savedPlaylist = playlistService.savePlaylist(playlists);
+      return ResponseHandler.generateResponse("Saved success", HttpStatus.OK, 0, savedPlaylist);
+    } catch (Exception e) {
+      return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, 1, null);
+    }
+  }
+
   @PutMapping("playlist/update/{id}")
 //	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
   public ResponseEntity updatePlaylist(

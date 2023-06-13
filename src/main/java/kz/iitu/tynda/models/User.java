@@ -149,4 +149,12 @@ public class User {
 	public void setSubscribed(boolean subscribed) {
 		this.subscribed = subscribed;
 	}
+
+	public List<Audiobook> getAudiobooks() {
+		return audiobooks;
+	}
+
+	public void setAudiobooks(List<Audiobook> audiobooks) {
+		this.audiobooks = audiobooks;
+	}
 }
