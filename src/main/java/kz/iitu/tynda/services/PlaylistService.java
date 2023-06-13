@@ -117,7 +117,7 @@ public class PlaylistService {
             Optional<Playlists> playlist = playlistRepository.findById(id);
             List<MusicDTO> musicDTOList = new ArrayList<>();
 
-            if (playlist.isPresent() && playlist.get().getMusics().size() > 0) {
+            if (playlist.isPresent()) {
                 for (Music music: playlist.get().getMusics()) {
                     MusicDTO musicDTO = new MusicDTO(music);
                     musicDTOList.add(musicDTO);

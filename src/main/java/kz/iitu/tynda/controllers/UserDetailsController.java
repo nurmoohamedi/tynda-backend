@@ -114,6 +114,16 @@ public class UserDetailsController {
         }
     }
 
+    @GetMapping("/collection/audiobooks")
+    public ResponseEntity getUsersAllBooks(@AuthenticationPrincipal UserDetailsImpl user, Principal principal) {
+        String userName = principal.getName();
+        try {
+            return ResponseHandler.generateResponse("", HttpStatus.OK, 0, playlistService.getArtistsByUserId(user.getId()));
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, 0, null);
+        }
+    }
+
     @PostMapping("/collection/playlists")
     public ResponseEntity savePlaylistToUser(
             @RequestParam("playlistId") String playlistId,

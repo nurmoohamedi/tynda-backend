@@ -59,6 +59,12 @@ public class User {
 				inverseJoinColumns = @JoinColumn(name = "artist_id"))
 	private List<Artist> artists = new ArrayList<>();
 
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinTable(	name = "user_audiobooks",
+				joinColumns = @JoinColumn(name = "user_id"),
+				inverseJoinColumns = @JoinColumn(name = "audiobook_id"))
+	private List<Audiobook> audiobooks = new ArrayList<>();
+
 	public User() {
 	}
 
