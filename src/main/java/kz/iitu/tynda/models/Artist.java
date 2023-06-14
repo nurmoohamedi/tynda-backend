@@ -27,9 +27,6 @@ public class Artist {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "date")
-    private String date;
-
     @Column(name = "followers")
     private Integer followers;
 

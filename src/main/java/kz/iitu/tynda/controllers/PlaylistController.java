@@ -103,29 +103,6 @@ public class PlaylistController {
     }
   }
 
-  @GetMapping("music/{id}")
-//	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-  public ResponseEntity getMusicById(@PathVariable("id") String id) {
-    try {
-      return ResponseHandler.generateResponse("", HttpStatus.OK, 0, playlistService.getMusicById(id));
-    } catch (Exception e) {
-      return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, 1, null);
-    }
-  }
-
-  @GetMapping("music/all")
-//	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-  public ResponseEntity getAllMusic(
-    @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
-    @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
-    @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
-    @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
-  ) {
-    System.out.println("start");
-    return ResponseHandler.generateResponse("", HttpStatus.OK, 0, playlistService.getAllMusic(pageNo, pageSize, sortBy, sortDir));
-  }
-
-
   @PostMapping(value = "playlist/{id}/save-music")
 //	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
   public ResponseEntity saveMusicToPlaylist(@RequestParam("musicId") String musicId, @PathVariable("id") int id) {
